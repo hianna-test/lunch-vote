@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0d0d1a">
+<title>🏆 결선 투표</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;color:#f0ede8;min-height:100vh;-webkit-tap-highlight-color:transparent;background:linear-gradient(160deg,#0d0d1a,#1a1024 40%,#0d1a2e)}
+.wrap{max-width:460px;margin:0 auto;padding:24px 16px;min-height:100vh}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes confetti{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(100vh) rotate(720deg)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(255,107,74,.2)}50%{box-shadow:0 0 35px rgba(255,107,74,.4)}}
+.fade-up{animation:fadeUp .5s ease-out}
+.inp{padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#f0ede8;font-size:15px;outline:none;font-family:inherit;width:100%}
+.inp:focus{border-color:rgba(255,107,74,.5)}.inp::placeholder{color:rgba(255,255,255,.25)}
+.bp{padding:16px 32px;border-radius:14px;border:none;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;width:100%;background:linear-gradient(135deg,#ff6b4a,#ff8a65);color:#fff;box-shadow:0 4px 20px rgba(255,107,74,.35)}
+.bp:hover{transform:translateY(-2px)}.bp:active{transform:translateY(0)}.bp:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.bg{padding:14px 28px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);font-size:15px;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;width:100%}
+.gl{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;backdrop-filter:blur(12px);padding:20px}
+.lb{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:12px;font-weight:500;letter-spacing:1px;text-transform:uppercase}
+.vc{display:flex;align-items:center;gap:16px;padding:20px;border-radius:18px;cursor:pointer;border:2px solid rgba(255,255,255,.08);transition:all .25s;background:rgba(255,255,255,.03);margin-bottom:12px}
+.vc:hover{background:rgba(255,255,255,.06);transform:translateX(4px)}
+.vc.sel{border-color:#ff6b4a;background:rgba(255,107,74,.1);animation:glow 2s ease-in-out infinite}
+.vc .ej{font-size:44px;flex-shrink:0}.vc .nfo{flex:1}.vc .nm{font-size:18px;font-weight:800;margin-bottom:2px}.vc .ds{font-size:13px;color:rgba(255,255,255,.4)}
+.vc .rd{width:28px;height:28px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;color:transparent}
+.vc.sel .rd{background:#ff6b4a;border-color:#ff6b4a;color:#fff}
+.rb{height:8px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:8px}
+.rb>div{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1);background:linear-gradient(90deg,#ff6b4a,#f6ad55)}
+.sc{display:none}.sc.on{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- SETUP -->
+<div id="s-setup" class="sc on fade-up">
+<div style="text-align:center;margin-bottom:36px">
+<div style="font-size:48px;margin-bottom:8px">🏆</div>
+<h1 style="font-size:28px;font-weight:900;margin-bottom:4px">결선 투표</h1>
+<p style="color:rgba(255,255,255,.4);font-size:14px">최종 후보를 등록하세요</p>
+</div>
+<div class="gl" style="margin-bottom:20px">
+<div class="lb">후보 식당 추가</div>
+<div style="display:flex;gap:8px;margin-bottom:10px">
+<input class="inp" id="ae" value="🍽️" style="width:52px;text-align:center;font-size:22px;padding:10px 6px;flex:none">
+<input class="inp" id="an" placeholder="식당 이름">
+</div>
+<div style="display:flex;gap:8px">
+<input class="inp" id="ad" placeholder="간단 설명 (선택)">
+<button class="bp" onclick="addC()" style="width:auto;padding:12px 20px;font-size:14px;flex:none">추가</button>
+</div>
+</div>
+<div id="cl"></div>
+<button class="bp" id="bc" onclick="createR()" disabled style="margin-top:8px">🚀 결선 투표 만들기</button>
+<div id="ch" style="text-align:center;color:rgba(255,255,255,.3);font-size:13px;margin-top:10px">최소 2개 이상 후보를 등록해주세요</div>
+</div>
+
+<!-- LOBBY -->
+<div id="s-lobby" class="sc">
+<div style="text-align:center;margin-bottom:32px">
+<div style="font-size:40px;margin-bottom:8px">📋</div>
+<h1 style="font-size:24px;font-weight:800;margin-bottom:4px">결선 투표 대기실</h1>
+<p style="color:rgba(255,255,255,.4);font-size:14px">조원들에게 링크를 공유하세요</p>
+</div>
+<div class="gl" style="margin-bottom:20px;text-align:center">
+<div class="lb">초대 링크</div>
+<div id="sl" style="padding:10px 14px;border-radius:10px;background:rgba(0,0,0,.3);font-size:12px;color:rgba(255,255,255,.5);word-break:break-all;margin-bottom:12px;font-family:monospace;line-height:1.5"></div>
+<button class="bg" onclick="cpL()" style="padding:10px 24px;font-size:13px">📋 링크 복사</button>
+</div>
+<div class="gl" style="margin-bottom:20px"><div class="lb">참여자</div><div id="lv"></div></div>
+<div style="display:flex;gap:10px">
+<button class="bp" onclick="goV()" style="flex:1;font-size:15px">🔥 나도 투표</button>
+<button class="bp" onclick="closeR()" style="flex:1;font-size:15px;background:linear-gradient(135deg,#805AD5,#9F7AEA);box-shadow:0 4px 20px rgba(128,90,213,.35)">🏁 투표 종료</button>
+</div>
+</div>
+
+<!-- JOIN -->
+<div id="s-join" class="sc">
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh">
+<div style="font-size:48px;margin-bottom:12px">🏆</div>
+<h1 style="font-size:24px;font-weight:800;margin-bottom:6px">결선 투표에 참여하세요!</h1>
+<p id="jd" style="color:rgba(255,255,255,.4);font-size:14px;margin-bottom:36px"></p>
+<div style="width:100%;max-width:320px">
+<input class="inp" id="in" placeholder="닉네임 입력" style="text-align:center;font-size:16px;padding:16px;margin-bottom:14px">
+<button class="bp" onclick="joinR()">참여하기 →</button>
+</div>
+</div>
+</div>
+
+<!-- VOTE -->
+<div id="s-vote" class="sc">
+<div style="text-align:center;margin-bottom:24px">
+<div style="font-size:36px;margin-bottom:8px">🏆</div>
+<h1 style="font-size:22px;font-weight:800;margin-bottom:4px">딱 1곳만 선택!</h1>
+<p id="vn" style="color:rgba(255,255,255,.4);font-size:14px"></p>
+</div>
+<div id="vcs"></div>
+<button class="bp" id="bs" onclick="submitV()" disabled>투표하기 ✓</button>
+</div>
+
+<!-- WAITING -->
+<div id="s-wait" class="sc">
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh">
+<div style="font-size:52px;margin-bottom:16px;animation:bounce 2s infinite">✅</div>
+<h2 style="font-size:22px;font-weight:800;margin-bottom:8px">투표 완료!</h2>
+<p style="color:rgba(255,255,255,.4);font-size:14px;margin-bottom:32px;text-align:center;line-height:1.6">방장이 투표를 종료하면<br>결과를 볼 수 있어요</p>
+<div class="gl" style="width:100%;max-width:320px"><div class="lb" style="text-align:center">투표 현황</div><div id="wv"></div></div>
+</div>
+</div>
+
+<!-- RESULT -->
+<div id="s-result" class="sc">
+<div id="cf" style="position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden"></div>
+<div style="position:relative;z-index:1">
+<div style="text-align:center;margin-bottom:28px">
+<div style="font-size:14px;color:rgba(255,255,255,.4);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;font-weight:500">결선 투표 결과</div>
+<h1 style="font-size:28px;font-weight:900">오늘의 점심은? 🎉</h1>
+</div>
+<div id="rw"></div>
+<div id="rr"></div>
+<div id="rv" style="margin-top:24px;text-align:center;color:rgba(255,255,255,.3);font-size:13px"></div>
+</div>
+</div>
+
+</div>
+
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
+import{getDatabase,ref,set,onValue,get,update}from'https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js';
+const app=initializeApp({apiKey:"AIzaSyAzjOPcZcZoh8cSt9xbU499oV3Sf5JPab8",authDomain:"googoo-86f29.firebaseapp.com",databaseURL:"https://googoo-86f29-default-rtdb.firebaseio.com",projectId:"googoo-86f29",storageBucket:"googoo-86f29.firebasestorage.app",messagingSenderId:"288903064018",appId:"1:288903064018:web:f9d5dccec39352702e000b"});
+const db=getDatabase(app);
+const D={rid:'',rm:null,host:false,me:'',cands:[],sel:null};
+const gi=()=>Math.random().toString(36).slice(2,8);
+const $=id=>document.getElementById(id);
+const sw=id=>{document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');$(id).classList.add('fade-up')};
+const ve=()=>D.rm?.voters?Object.entries(D.rm.voters):[];
+
+window.addC=()=>{const n=$('an').value.trim(),e=$('ae').value||'🍽️',d=$('ad').value.trim();if(!n)return;D.cands.push({id:gi(),name:n,emoji:e,desc:d});$('an').value='';$('ae').value='🍽️';$('ad').value='';rC()};
+window.rmC=id=>{D.cands=D.cands.filter(c=>c.id!==id);rC()};
+
+function rC(){
+  const b=$('bc'),h=$('ch'),l=$('cl');
+  b.disabled=D.cands.length<2;h.style.display=D.cands.length<2?'block':'none';
+  b.textContent=`🚀 결선 투표 만들기 (${D.cands.length}개 후보)`;
+  l.innerHTML=D.cands.length?`<div class="lb" style="margin-bottom:10px">등록된 후보 (${D.cands.length})</div>`:'';
+  D.cands.forEach((c,i)=>{l.innerHTML+=`<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);margin-bottom:6px;animation:fadeUp .3s ease-out ${i*.05}s both"><span style="font-size:28px">${c.emoji}</span><div style="flex:1"><div style="font-size:15px;font-weight:600">${c.name}</div>${c.desc?`<div style="font-size:12px;color:rgba(255,255,255,.35);margin-top:2px">${c.desc}</div>`:''}</div><button onclick="rmC('${c.id}')" style="background:none;border:none;color:rgba(255,107,74,.5);font-size:18px;cursor:pointer;padding:4px 8px">✕</button></div>`});
+}
+
+window.createR=async()=>{
+  const id='f-'+gi();
+  const data={candidates:D.cands.reduce((a,c)=>{a[c.id]=c;return a},{}),status:'open',voters:{},votes:{},createdAt:Date.now()};
+  await set(ref(db,`rooms/${id}`),data);
+  D.rid=id;D.rm=data;D.host=true;D.me='방장';location.hash=id;listen();sw('s-lobby');rL();
+};
+
+function listen(){onValue(ref(db,`rooms/${D.rid}`),s=>{if(!s.exists())return;D.rm=s.val();if(D.rm.status==='closed')sR();rL();rW()})}
+
+function rL(){
+  $('sl').textContent=location.origin+location.pathname+'#'+D.rid;
+  const v=ve();
+  $('lv').innerHTML=v.length===0?'<div style="color:rgba(255,255,255,.25);font-size:14px;text-align:center;padding:12px">아직 참여자가 없어요</div>':v.map(([n,d],i)=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;${i<v.length-1?'border-bottom:1px solid rgba(255,255,255,.05)':''}"><div style="width:36px;height:36px;border-radius:50%;background:hsl(${(i*47+120)%360},45%,35%);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">${n[0]}</div><span style="flex:1;font-weight:600;font-size:15px">${n}</span><span style="font-size:11px;padding:4px 10px;border-radius:20px;background:${d.done?'rgba(56,161,105,.15)':'rgba(255,255,255,.06)'};color:${d.done?'#68D391':'rgba(255,255,255,.3)'};font-weight:500">${d.done?'완료 ✓':'대기중'}</span></div>`).join('');
+}
+
+function rW(){
+  const v=ve(),dn=v.filter(([,d])=>d.done).length;
+  $('wv').innerHTML=v.map(([n,d],i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;${i<v.length-1?'border-bottom:1px solid rgba(255,255,255,.05)':''}"><div style="width:32px;height:32px;border-radius:50%;background:hsl(${(i*47+120)%360},45%,35%);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">${n[0]}</div><span style="flex:1;font-size:14px;font-weight:600">${n}</span><span style="font-size:16px">${d.done?'✅':'⏳'}</span></div>`).join('')+`<div style="text-align:center;margin-top:12px;font-size:13px;color:rgba(255,255,255,.3)">${dn}/${v.length}명 완료</div>`;
+}
+
+window.cpL=()=>{navigator.clipboard?.writeText(location.origin+location.pathname+'#'+D.rid).then(()=>alert('링크가 복사되었습니다!'))};
+
+window.joinR=async()=>{const n=$('in').value.trim();if(!n)return;D.me=n;const s=await get(ref(db,`rooms/${D.rid}/votes/${n}`));if(s.exists()){sw('s-wait');return}await update(ref(db,`rooms/${D.rid}/voters`),{[n]:{joinedAt:Date.now(),done:false}});goV()};
+
+window.goV=()=>{
+  const cs=Object.values(D.rm.candidates);
+  $('vn').textContent=`${D.me}님, 하나만 골라주세요`;
+  D.sel=null;$('bs').disabled=true;
+  $('vcs').innerHTML=cs.map((c,i)=>`<div class="vc" id="vc-${c.id}" onclick="pk('${c.id}')" style="animation:fadeUp .4s ease-out ${i*.1}s both"><div class="ej">${c.emoji}</div><div class="nfo"><div class="nm">${c.name}</div>${c.desc?`<div class="ds">${c.desc}</div>`:''}</div><div class="rd">✓</div></div>`).join('');
+  sw('s-vote');
+};
+
+window.pk=id=>{D.sel=id;document.querySelectorAll('.vc').forEach(e=>e.classList.remove('sel'));$('vc-'+id).classList.add('sel');$('bs').disabled=false};
+window.submitV=async()=>{if(!D.sel)return;await set(ref(db,`rooms/${D.rid}/votes/${D.me}`),D.sel);await update(ref(db,`rooms/${D.rid}/voters/${D.me}`),{done:true});sw('s-wait')};
+window.closeR=async()=>{await update(ref(db,`rooms/${D.rid}`),{status:'closed'})};
+
+function sR(){
+  sw('s-result');
+  const cs=Object.values(D.rm.candidates),vt=D.rm.votes||{},ct={};
+  cs.forEach(c=>ct[c.id]={...c,count:0});Object.values(vt).forEach(id=>{if(ct[id])ct[id].count++});
+  const sr=Object.values(ct).sort((a,b)=>b.count-a.count),tt=Object.keys(vt).length,w=sr[0];
+  let ch='';for(let i=0;i<18;i++){const co=['#ff6b4a','#f6ad55','#68D391','#805AD5','#FC8181','#63B3ED'];ch+=`<div style="position:absolute;left:${Math.random()*100}%;top:-20px;width:${8+Math.random()*8}px;height:${8+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};background:${co[i%6]};animation:confetti ${3+Math.random()*4}s linear ${Math.random()*3}s infinite;opacity:.7"></div>`}
+  $('cf').innerHTML=ch;
+  $('rw').innerHTML=`<div style="padding:28px;border-radius:24px;text-align:center;margin-bottom:28px;background:linear-gradient(160deg,rgba(255,107,74,.15),rgba(255,138,101,.05));border:1px solid rgba(255,107,74,.2);animation:popIn .6s cubic-bezier(.4,0,.2,1)"><div style="font-size:14px;margin-bottom:6px">👑</div><div style="font-size:64px;margin-bottom:12px">${w.emoji}</div><div style="font-size:30px;font-weight:900;margin-bottom:6px">${w.name}</div>${w.desc?`<div style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:12px">${w.desc}</div>`:''}<div style="display:inline-flex;gap:8px;padding:8px 20px;border-radius:12px;background:rgba(0,0,0,.2)"><span style="color:#68D391;font-weight:700">🗳️ ${w.count}표</span><span style="color:rgba(255,255,255,.15)">|</span><span style="color:rgba(255,255,255,.4)">${tt>0?Math.round(w.count/tt*100):0}%</span></div></div>`;
+  $('rr').innerHTML=sr.length>1?`<div class="lb">전체 순위</div>`+sr.slice(1).map((r,i)=>{const rk=i+2,pc=tt>0?(r.count/tt)*100:0;return`<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;margin-bottom:6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);animation:fadeUp .4s ease-out ${(i+1)*.08}s both"><div style="width:32px;height:32px;border-radius:10px;background:${rk===2?'rgba(246,173,85,.15)':'rgba(255,255,255,.05)'};color:${rk===2?'#F6AD55':'rgba(255,255,255,.3)'};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800">${rk}</div><span style="font-size:22px">${r.emoji}</span><div style="flex:1"><div style="font-size:15px;font-weight:700">${r.name}</div><div class="rb"><div style="width:${pc}%"></div></div></div><div style="font-size:13px;color:rgba(255,255,255,.5)">🗳️ ${r.count}표</div></div>`}).join(''):'';
+  $('rv').textContent=`총 ${D.rm.voters?Object.keys(D.rm.voters).length:0}명 참여`;
+}
+
+const h=location.hash.replace('#','');
+if(h){D.rid=h;get(ref(db,`rooms/${h}`)).then(s=>{if(s.exists()){D.rm=s.val();listen();if(D.rm.status==='closed')sR();else{$('jd').textContent=`${Object.keys(D.rm.candidates).length}개 후보 중 하나를 골라주세요`;sw('s-join')}}else sw('s-setup')}).catch(()=>sw('s-setup'))}else sw('s-setup');
+$('an').addEventListener('keydown',e=>{if(e.key==='Enter')window.addC()});
+$('ad').addEventListener('keydown',e=>{if(e.key==='Enter')window.addC()});
+$('in').addEventListener('keydown',e=>{if(e.key==='Enter')window.joinR()});
+</script>
+</body>
+</html>
